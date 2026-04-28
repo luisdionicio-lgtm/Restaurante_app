@@ -1,5 +1,6 @@
 package com.tecsup.restaurante_app.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,6 +21,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+
+import com.tecsup.restaurante_app.navigation.Screen
 
 data class Dish(
     val id: Int,
@@ -98,7 +101,9 @@ fun MenuScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(filteredDishes) { dish ->
-                    DishItem(dish = dish)
+                    DishItem(dish = dish) {
+                        navController.navigate(Screen.DishDetail.createRoute(dish.id))
+                    }
                 }
             }
         }
@@ -106,9 +111,11 @@ fun MenuScreen(navController: NavController) {
 }
 
 @Composable
-fun DishItem(dish: Dish) {
+fun DishItem(dish: Dish, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(

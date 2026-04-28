@@ -13,6 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.tecsup.restaurante_app.screens.LoginScreen
 import com.tecsup.restaurante_app.screens.HomeScreen
 import com.tecsup.restaurante_app.screens.MenuScreen
+import com.tecsup.restaurante_app.screens.DishDetailScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 @Composable
 fun AppNavigation() {
@@ -32,6 +35,14 @@ fun AppNavigation() {
 
         composable(Screen.Menu.route) {
             MenuScreen(navController)
+        }
+
+        composable(
+            route = Screen.DishDetail.route,
+            arguments = listOf(navArgument("dishId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val dishId = backStackEntry.arguments?.getInt("dishId") ?: 0
+            DishDetailScreen(dishId = dishId, navController = navController)
         }
 
         composable(Screen.Order.route) {
