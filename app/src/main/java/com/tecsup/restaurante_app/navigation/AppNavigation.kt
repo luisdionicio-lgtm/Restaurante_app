@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tecsup.restaurante_app.screens.LoginScreen
+import com.tecsup.restaurante_app.screens.HomeScreen
+import com.tecsup.restaurante_app.screens.MenuScreen
 
 @Composable
 fun AppNavigation() {
@@ -25,15 +27,32 @@ fun AppNavigation() {
         }
 
         composable(Screen.Home.route) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Bienvenido a Sabor Andino",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
+            HomeScreen(navController)
         }
+
+        composable(Screen.Menu.route) {
+            MenuScreen(navController)
+        }
+
+        composable(Screen.Order.route) {
+            PlaceholderScreen("Mi Pedido")
+        }
+
+        composable(Screen.Profile.route) {
+            PlaceholderScreen("Mi Perfil")
+        }
+    }
+}
+
+@Composable
+fun PlaceholderScreen(name: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Pantalla de $name (En construcción)",
+            style = MaterialTheme.typography.headlineMedium
+        )
     }
 }
