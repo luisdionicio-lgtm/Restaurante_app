@@ -12,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,11 +20,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DishDetailScreen(dishId: Int, navController: NavController) {
-    // Reutilizamos la data de ejemplo por ahora
     val dishes = listOf(
         Dish(1, "Papa a la Huancaína", "Papas cocidas con crema de ají amarillo y queso.", 15.0, "https://imgmedia.buenazo.pe/1200x660/buenazo/original/2020/09/25/5f6eaf8e2810e95b5c5da50c.jpg", "Entradas"),
         Dish(2, "Ceviche Clásico", "Pescado fresco marinado en limón y especias.", 25.0, "https://i0.wp.com/www.cetprocajamarca.edu.pe/wp-content/uploads/2024/12/cebiche.jpg?resize=735%2C413&ssl=1", "Entradas"),
@@ -38,10 +37,12 @@ fun DishDetailScreen(dishId: Int, navController: NavController) {
     )
 
     val dish = dishes.find { it.id == dishId } ?: return
-
     var quantity by remember { mutableStateOf(1) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(dish.name) },
@@ -72,14 +73,8 @@ fun DishDetailScreen(dishId: Int, navController: NavController) {
                 contentScale = ContentScale.Crop
             )
 
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
-                Text(
-                    text = dish.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(dish.name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
 
                 Text(
                     text = "S/ ${"%.2f".format(dish.price)}",
@@ -91,14 +86,10 @@ fun DishDetailScreen(dishId: Int, navController: NavController) {
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                Text(
-                    text = "Descripción",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("Descripción", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
 
                 Text(
-                    text = dish.description + " Preparado con ingredientes frescos de la mejor calidad, siguiendo la receta tradicional que nos caracteriza.",
+                    text = dish.description + " Preparado con ingredientes frescos de la mejor calidad.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
@@ -111,10 +102,7 @@ fun DishDetailScreen(dishId: Int, navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(
-                        onClick = { if (quantity > 1) quantity-- },
-                        modifier = Modifier.size(48.dp)
-                    ) {
+                    IconButton(onClick = { if (quantity > 1) quantity-- }) {
                         Icon(Icons.Default.Remove, contentDescription = "Reducir")
                     }
 
@@ -125,10 +113,7 @@ fun DishDetailScreen(dishId: Int, navController: NavController) {
                         fontWeight = FontWeight.Bold
                     )
 
-                    IconButton(
-                        onClick = { quantity++ },
-                        modifier = Modifier.size(48.dp)
-                    ) {
+                    IconButton(onClick = { quantity++ }) {
                         Icon(Icons.Default.Add, contentDescription = "Aumentar")
                     }
                 }
@@ -136,7 +121,12 @@ fun DishDetailScreen(dishId: Int, navController: NavController) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = { /* Acción para agregar al pedido */ },
+                    onClick = {
+                        CartManager.addToCart(dish, quantity)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("${dish.name} agregado al pedido")
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),

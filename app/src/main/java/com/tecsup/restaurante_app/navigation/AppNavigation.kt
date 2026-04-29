@@ -14,6 +14,8 @@ import com.tecsup.restaurante_app.screens.LoginScreen
 import com.tecsup.restaurante_app.screens.HomeScreen
 import com.tecsup.restaurante_app.screens.MenuScreen
 import com.tecsup.restaurante_app.screens.DishDetailScreen
+import com.tecsup.restaurante_app.screens.OrderScreen
+import com.tecsup.restaurante_app.screens.ProfileScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
@@ -46,11 +48,11 @@ fun AppNavigation() {
         }
 
         composable(Screen.Order.route) {
-            PlaceholderScreen("Mi Pedido")
+            OrderScreen(navController)
         }
 
         composable(Screen.Profile.route) {
-            PlaceholderScreen("Mi Perfil")
+            ProfileScreen(navController)
         }
     }
 }
