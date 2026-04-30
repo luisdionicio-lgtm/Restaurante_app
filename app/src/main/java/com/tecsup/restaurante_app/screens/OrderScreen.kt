@@ -34,6 +34,9 @@ fun OrderScreen(navController: NavController) {
     val orderItems = CartManager.items
     val total = CartManager.getTotal()
 
+    var showPaymentDialog by remember { mutableStateOf(false) }
+    var showPaidMessage by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -56,8 +59,14 @@ fun OrderScreen(navController: NavController) {
                 .padding(padding)
         ) {
             if (orderItems.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Tu pedido está vacío", style = MaterialTheme.typography.bodyLarge)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Tu pedido está vacío",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             } else {
                 LazyColumn(
@@ -95,23 +104,87 @@ fun OrderScreen(navController: NavController) {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Total a pagar", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                            Text("S/ ${"%.2f".format(total)}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Total a pagar",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                "S/ ${"%.2f".format(total)}",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         Button(
-                            onClick = { /* Acción para confirmar */ },
-                            modifier = Modifier.fillMaxWidth().height(56.dp),
+                            onClick = { showPaymentDialog = true },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Confirmar Pedido", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Confirmar Pedido",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        if (showPaidMessage) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "Pago confirmado correctamente.",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
             }
         }
+    }
+
+    if (showPaymentDialog) {
+        AlertDialog(
+            onDismissRequest = { showPaymentDialog = false },
+            title = { Text("Pago con Yape") },
+            text = {
+                Column {
+                    Text("Paga al siguiente número:")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "999 888 777",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Monto: S/ ${"%.2f".format(total)}")
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showPaymentDialog = false
+                        showPaidMessage = true
+                        CartManager.clearCart()
+                    }
+                ) {
+                    Text("Ya pagué")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showPaymentDialog = false }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
@@ -127,7 +200,9 @@ fun OrderItemCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -142,25 +217,58 @@ fun OrderItemCard(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = item.dish.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(text = "S/ ${"%.2f".format(item.dish.price)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
-                
+                Text(
+                    text = item.dish.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "S/ ${"%.2f".format(item.dish.price)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
-                    IconButton(onClick = onDecrease, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Remove, contentDescription = "Menos", modifier = Modifier.size(20.dp))
+                    IconButton(
+                        onClick = onDecrease,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Remove,
+                            contentDescription = "Menos",
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
-                    Text(text = item.quantity.toString(), modifier = Modifier.padding(horizontal = 12.dp), fontWeight = FontWeight.Bold)
-                    IconButton(onClick = onIncrease, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Add, contentDescription = "Más", modifier = Modifier.size(20.dp))
+
+                    Text(
+                        text = item.quantity.toString(),
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    IconButton(
+                        onClick = onIncrease,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Más",
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }
 
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.error)
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Eliminar",
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }
