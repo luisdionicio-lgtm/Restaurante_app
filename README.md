@@ -24,7 +24,12 @@
 
 
 ## Captura de nuestro Pedido antes de la mejora
+**Detalle de nuestro pedido**
+
 ![Pedido.png](Docs/Pedido.png)
+
+**Confirmación del pedido y con qué pagarlo**
+![PagarPedido.png](Docs/PagarPedido.png)
 
 ## Captura de nuestro Pedido despues de la mejora
 
