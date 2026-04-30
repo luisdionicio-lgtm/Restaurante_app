@@ -20,10 +20,12 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
-    var name by remember { mutableStateOf("Luis Dionicio") }
-    var email by remember { mutableStateOf("luis@gmail.com") }
-    var phone by remember { mutableStateOf("987 654 321") }
-    var address by remember { mutableStateOf("Av. Perú 123, Lima") }
+    val userData = ProfileManager.userData
+    
+    var name by remember { mutableStateOf(userData.name) }
+    var email by remember { mutableStateOf(userData.email) }
+    var phone by remember { mutableStateOf(userData.phone) }
+    var address by remember { mutableStateOf(userData.address) }
     var editing by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
 
@@ -63,20 +65,24 @@ fun ProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             if (!editing) {
-                Text(name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(userData.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                 Text("Cliente frecuente", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                ProfileInfoCard(Icons.Default.Email, "Correo", email)
-                ProfileInfoCard(Icons.Default.Phone, "Teléfono", phone)
-                ProfileInfoCard(Icons.Default.LocationOn, "Dirección", address)
+                ProfileInfoCard(Icons.Default.Email, "Correo", userData.email)
+                ProfileInfoCard(Icons.Default.Phone, "Teléfono", userData.phone)
+                ProfileInfoCard(Icons.Default.LocationOn, "Dirección", userData.address)
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
                     onClick = {
                         editing = true
+                        name = userData.name
+                        email = userData.email
+                        phone = userData.phone
+                        address = userData.address
                         message = ""
                     },
                     modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -85,6 +91,7 @@ fun ProfileScreen(navController: NavController) {
                     Text("Editar perfil")
                 }
             } else {
+                // ... campos de texto ... (ya están usando name, email, etc.)
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -123,6 +130,7 @@ fun ProfileScreen(navController: NavController) {
 
                 Button(
                     onClick = {
+                        ProfileManager.updateProfile(name, email, phone, address)
                         editing = false
                         message = "Perfil actualizado correctamente"
                     },

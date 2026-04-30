@@ -59,7 +59,7 @@ fun HomeScreen(navController: NavController) {
         )
         
         Text(
-            text = "Hola, Cliente",
+            text = "Hola, ${ProfileManager.userData.name}",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 8.dp)
         )
