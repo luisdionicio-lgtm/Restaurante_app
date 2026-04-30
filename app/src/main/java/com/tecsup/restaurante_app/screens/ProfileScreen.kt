@@ -23,8 +23,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.tecsup.restaurante_app.ui.BottomNavigationBar
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(navController = rememberNavController())
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +69,9 @@ fun ProfileScreen(navController: NavController) {
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) { padding ->
         Column(
@@ -72,20 +86,22 @@ fun ProfileScreen(navController: NavController) {
             // Header con imagen de perfil
             Box(contentAlignment = Alignment.BottomEnd) {
                 Surface(
-                    modifier = Modifier.size(120.dp),
+                    modifier = Modifier.size(140.dp),
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    border = androidx.compose.foundation.BorderStroke(4.dp, MaterialTheme.colorScheme.surface),
+                    shadowElevation = 8.dp
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
+                    AsyncImage(
+                        model = userData.profileImageUrl,
                         contentDescription = "Perfil",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
                 }
                 if (!editing) {
                     Surface(
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier.size(40.dp),
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primary,
                         shadowElevation = 4.dp
@@ -94,13 +110,13 @@ fun ProfileScreen(navController: NavController) {
                             imageVector = Icons.Default.Edit,
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.padding(8.dp).size(16.dp)
+                            modifier = Modifier.padding(10.dp).size(20.dp)
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             if (!editing) {
                 Text(
@@ -127,6 +143,29 @@ fun ProfileScreen(navController: NavController) {
                 ProfileInfoCard(Icons.Default.Email, "Correo Electrónico", userData.email)
                 ProfileInfoCard(Icons.Default.Phone, "Teléfono de Contacto", userData.phone)
                 ProfileInfoCard(Icons.Default.LocationOn, "Dirección de Entrega", userData.address)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f))
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Text(
+                            "Sobre mí",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Amante de la gastronomía peruana y cliente fiel de Sabor Andino desde 2023.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(32.dp))
 

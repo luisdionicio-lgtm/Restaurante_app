@@ -8,7 +8,8 @@ data class UserData(
     val name: String,
     val email: String,
     val phone: String,
-    val address: String
+    val address: String,
+    val profileImageUrl: String = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop"
 )
 
 object ProfileManager {

@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.tecsup.restaurante_app.navigation.Screen
+import com.tecsup.restaurante_app.ui.BottomNavigationBar
 
 @Preview(showBackground = true)
 @Composable
@@ -87,6 +88,9 @@ fun HomeScreen(navController: NavController) {
                     )
                 }
             }
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) { padding ->
         Column(

@@ -28,6 +28,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.tecsup.restaurante_app.navigation.Screen
+import com.tecsup.restaurante_app.ui.BottomNavigationBar
+import com.tecsup.restaurante_app.ui.StatusBadge
 
 data class Dish(
     val id: Int,
@@ -35,7 +37,8 @@ data class Dish(
     val description: String,
     val price: Double,
     val imageUrl: String,
-    val category: String
+    val category: String,
+    val status: String? = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,11 +49,11 @@ fun MenuScreen(navController: NavController) {
 
     val dishes = remember {
         listOf(
-            Dish(1, "Papa a la Huancaína", "Papas cocidas con crema de ají amarillo y queso.", 15.0, "https://imgmedia.buenazo.pe/1200x660/buenazo/original/2020/09/25/5f6eaf8e2810e95b5c5da50c.jpg", "Entradas"),
-            Dish(2, "Ceviche Clásico", "Pescado fresco marinado en limón y especias.", 25.0, "https://i0.wp.com/www.cetprocajamarca.edu.pe/wp-content/uploads/2024/12/cebiche.jpg?resize=735%2C413&ssl=1", "Entradas"),
+            Dish(1, "Papa a la Huancaína", "Papas cocidas con crema de ají amarillo y queso.", 15.0, "https://imgmedia.buenazo.pe/1200x660/buenazo/original/2020/09/25/5f6eaf8e2810e95b5c5da50c.jpg", "Entradas", "Popular"),
+            Dish(2, "Ceviche Clásico", "Pescado fresco marinado en limón y especias.", 25.0, "https://i0.wp.com/www.cetprocajamarca.edu.pe/wp-content/uploads/2024/12/cebiche.jpg?resize=735%2C413&ssl=1", "Entradas", "Bestseller"),
             Dish(3, "Lomo Saltado", "Trozos de carne salteados con cebolla y tomate.", 35.0, "https://static.wixstatic.com/media/9755d8_b2d98eade0814b17a67fdf7d95888fdc~mv2.png/v1/fill/w_1000,h_563,al_c,q_90,usm_0.66_1.00_0.01/9755d8_b2d98eade0814b17a67fdf7d95888fdc~mv2.png", "Platos de Fondo"),
             Dish(4, "Ají de Gallina", "Crema espesa con base de ají amarillo y pollo.", 28.0, "https://mirecetadehoy.com/assets/images/2025/11/aji-de-gallina_800x534.webp", "Platos de Fondo"),
-            Dish(5, "Suspiro a la Limeña", "Dulce tradicional a base de manjar blanco.", 10.0, "https://www.nestleprofessional-latam.com/sites/default/files/styles/np_recipe_detail/public/2023-09/SUSPIRO-LIMEN%E2%95%A0%C3%A2O.jpg?itok=arjP6tu6", "Postres"),
+            Dish(5, "Suspiro a la Limeña", "Dulce tradicional a base de manjar blanco.", 10.0, "https://www.nestleprofessional-latam.com/sites/default/files/styles/np_recipe_detail/public/2023-09/SUSPIRO-LIMEN%E2%95%A0%C3%A2O.jpg?itok=arjP6tu6", "Postres", "Nuevo"),
             Dish(6, "Picarones", "Anillos de masa frita con miel de chancaca.", 10.0, "https://imagescdn.estarbien.com.pe/blt1dce4402dc518e3a/68b28124f8270074d884d734/PORTADA_Picarones_Saludables.jpg?format=auto&quality=85", "Postres"),
             Dish(7, "Chicha Morada", "Bebida de maíz morado, piña y especias.", 8.0, "https://i.ytimg.com/vi/gnJeTv-FuLU/maxresdefault.jpg", "Bebidas"),
             Dish(8, "Inca Kola", "La gaseosa del Perú.", 5.0, "https://jamacarabanchel.com/wp-content/uploads/2020/04/INKACOLA-300.png", "Bebidas")
@@ -83,6 +86,9 @@ fun MenuScreen(navController: NavController) {
                     titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) { padding ->
         Column(
@@ -144,7 +150,7 @@ fun DishItem(dish: Dish, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
             modifier = Modifier
@@ -152,14 +158,30 @@ fun DishItem(dish: Dish, onClick: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = dish.imageUrl,
-                contentDescription = dish.name,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(20.dp)),
-                contentScale = ContentScale.Crop
-            )
+            Box(contentAlignment = Alignment.TopStart) {
+                AsyncImage(
+                    model = dish.imageUrl,
+                    contentDescription = dish.name,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(20.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                
+                if (dish.status != null) {
+                    Box(modifier = Modifier.padding(4.dp)) {
+                        StatusBadge(
+                            text = dish.status,
+                            containerColor = when (dish.status) {
+                                "Popular" -> Color(0xFFF39C12)
+                                "Bestseller" -> Color(0xFFE74C3C)
+                                "Nuevo" -> Color(0xFF27AE60)
+                                else -> MaterialTheme.colorScheme.primary
+                            }
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -199,7 +221,8 @@ fun DishItem(dish: Dish, onClick: () -> Unit) {
                     Surface(
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
+                        shadowElevation = 4.dp
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,

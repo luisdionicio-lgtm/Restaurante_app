@@ -25,10 +25,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.tecsup.restaurante_app.ui.BottomNavigationBar
+import com.tecsup.restaurante_app.ui.EmptyStateView
+
+@Preview(showBackground = true)
+@Composable
+fun OrderScreenPreview() {
+    OrderScreen(navController = rememberNavController())
+}
 
 data class OrderItem(
     val dish: Dish,
@@ -57,6 +64,9 @@ fun OrderScreen(navController: NavController) {
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) { padding ->
         Column(
@@ -66,42 +76,13 @@ fun OrderScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             if (orderItems.isEmpty()) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                        modifier = Modifier.size(120.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = null,
-                            modifier = Modifier.padding(32.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        "Tu carrito está vacío",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Agrega algo delicioso del menú",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Button(
-                        onClick = { navController.popBackStack() },
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Text("Explorar Menú")
-                    }
-                }
+                EmptyStateView(
+                    icon = Icons.Default.ShoppingCart,
+                    title = "Tu carrito está vacío",
+                    description = "Agrega algo delicioso del menú para comenzar tu pedido.",
+                    buttonText = "Explorar Menú",
+                    onButtonClick = { navController.popBackStack() }
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
