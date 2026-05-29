@@ -21,6 +21,7 @@ import com.tecsup.restaurante_app.screens.MenuScreen
 import com.tecsup.restaurante_app.screens.DishDetailScreen
 import com.tecsup.restaurante_app.screens.OrderScreen
 import com.tecsup.restaurante_app.screens.ProfileScreen
+import com.tecsup.restaurante_app.screens.ConcurrencyTestScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
@@ -70,6 +71,10 @@ fun AppNavigation() {
 
         composable(Screen.Profile.route) {
             ProfileScreen(navController)
+        }
+
+        composable(Screen.Concurrency.route) {
+            ConcurrencyTestScreen(navController)
         }
     }
 }

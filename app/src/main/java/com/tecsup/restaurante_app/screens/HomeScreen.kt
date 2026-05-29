@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -52,7 +53,8 @@ fun HomeScreen(navController: NavController) {
     val cards = listOf(
         HomeCard("Ver Menú", Icons.Default.List, Screen.Menu.route, "Explora nuestros platos", MaterialTheme.colorScheme.primary),
         HomeCard("Mi Pedido", Icons.Default.ShoppingCart, Screen.Order.route, "Gestiona tu carrito", MaterialTheme.colorScheme.secondary),
-        HomeCard("Mi Perfil", Icons.Default.AccountCircle, Screen.Profile.route, "Tus datos personales", Color(0xFF27AE60))
+        HomeCard("Mi Perfil", Icons.Default.AccountCircle, Screen.Profile.route, "Tus datos personales", Color(0xFF27AE60)),
+        HomeCard("Pruebas Hilos", Icons.Default.Bolt, Screen.Concurrency.route, "Demo de Corrutinas", Color(0xFFE67E22))
     )
 
     Scaffold(
